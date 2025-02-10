@@ -30,19 +30,19 @@ jobs:
         wget https://dl.google.com/android/repository/commandlinetools-linux-7583922_latest.zip
         unzip commandlinetools-linux-7583922_latest.zip -d $HOME/android-sdk
 
-        # Set environment variables
+        # Set environment variables for Android SDK
         export ANDROID_HOME=$HOME/android-sdk
         export PATH=$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools:$PATH
-
-        # Ensure the sdkmanager is accessible
+        
+        # Ensure sdkmanager is available
         echo "ANDROID_HOME=$ANDROID_HOME"
         echo "PATH=$PATH"
         
-        # Accept licenses
-        yes | sdkmanager --licenses
+        # Accept SDK licenses
+        yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses
         
         # Install required platforms and build tools
-        sdkmanager "platforms;android-30" "build-tools;30.0.3" "emulator" "system-images;android-30;google_apis;x86_64"
+        $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "platforms;android-30" "build-tools;30.0.3" "emulator" "system-images;android-30;google_apis;x86_64"
         
         # Install Appium
         npm install -g appium
@@ -54,7 +54,7 @@ jobs:
     - name: Set up Android Emulator
       run: |
         # Create and start an Android Emulator
-        echo "no" | avdmanager create avd --name testDevice --package "system-images;android-30;google_apis;x86_64"
+        echo "no" | $ANDROID_HOME/cmdline-tools/latest/bin/avdmanager create avd --name testDevice --package "system-images;android-30;google_apis;x86_64"
         nohup emulator -avd testDevice -no-window -no-audio -accel on &
 
     - name: Wait for Emulator to start
