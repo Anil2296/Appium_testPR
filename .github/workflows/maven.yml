@@ -1,0 +1,82 @@
+name: PR Automation Tests
+
+on:
+  pull_request:
+    branches:
+      - main  # Trigger only when the PR is targeting the 'main' branch
+    types: [opened, synchronize, reopened]  # Trigger when PR is created, synchronized, or reopened
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Zulu OpenJDK 11
+        uses: actions/setup-java@v3
+        with:
+          java-version: '11'  # Specify Java 11 version
+          distribution: 'zulu'  # Use Zulu OpenJDK distribution
+
+      - name: Install dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y openjdk-11-jdk wget unzip
+          # Install Android SDK
+          wget https://dl.google.com/android/repository/commandlinetools-linux-7583922_latest.zip
+          unzip commandlinetools-linux-7583922_latest.zip -d $HOME/android-sdk
+          export ANDROID_HOME=$HOME/android-sdk
+          export PATH=$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools:$PATH
+          yes | sdkmanager --licenses
+          sdkmanager "platforms;android-30" "build-tools;30.0.3" "emulator" "system-images;android-30;google_apis;x86_64"
+          # Install Appium
+          npm install -g appium
+          appium --version
+          # Install UIAutomator
+          npm install -g appium-uiautomator2-driver
+
+      - name: Start Android Emulator
+        run: |
+          echo "Starting Android Emulator"
+          nohup $ANDROID_HOME/emulator/emulator -avd Pixel_3_API_30 -no-window -noaudio -verbose &
+          sleep 30  # Wait for emulator to boot
+
+      - name: Run Appium Tests
+        id: test
+        run: |
+          echo "Running Appium Tests"
+          appium --session-override &
+          sleep 5  # Wait for Appium server to start
+          # Replace with your test script
+          npm run test  # Or the command to run your Appium UIAutomator tests
+        continue-on-error: true  # Ensure that the next steps can run even if tests fail
+
+      - name: Check if tests passed and update PR status
+        if: ${{ steps.test.outcome == 'success' }}
+        run: |
+          echo "Tests passed. Approving PR."
+          # Use GitHub API to approve the PR
+          curl -X PUT \
+            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Accept: application/vnd.github.v3+json" \
+            -d '{"event": "APPROVE"}' \
+            "https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/reviews"
+        
+      - name: Check if tests failed and request changes on PR
+        if: ${{ steps.test.outcome == 'failure' }}
+        run: |
+          echo "Tests failed. Requesting changes on PR."
+          # Use GitHub API to request changes
+          curl -X PUT \
+            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Accept: application/vnd.github.v3+json" \
+            -d '{"event": "REQUEST_CHANGES", "body": "The automated tests failed. Please fix them."}' \
+            "https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/reviews"
+
+      - name: Clean up Emulator
+        if: github.ref == 'refs/heads/main'
+        run: |
+          echo "Cleaning up Emulator"
+          adb -s emulator-5554 emu kill  # Close the emulator after tests are done
