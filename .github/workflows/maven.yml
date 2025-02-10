@@ -1,5 +1,3 @@
-name: Appium TestNG Tests
-
 on:
   push:
     branches:
@@ -10,32 +8,46 @@ on:
 
 jobs:
   appium-tests:
-    runs-on: macos-latest  # You can also use macos-latest depending on your setup
+    runs-on: macos-latest
 
     steps:
-      # Step 1: Checkout the repository
       - name: Checkout Repository
         uses: actions/checkout@v2
 
-      # Step 2: Set up Java (Required for Appium and TestNG)
       - name: Set up JDK 11
         uses: actions/setup-java@v2
         with:
           java-version: '11'
           distribution: 'zulu'
 
-      # Step 3: Install dependencies (Node.js, Appium, etc.)
-      - name: set appium
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+
+      - name: Install Appium
         run: |
-          npm install -g appium@v2.15 # Install Appium globally
+          npm install -g appium@v2.15
           appium -v
           appium &>/dev/null &
-          
 
-      - name: run appium android tests
-        uses: reactivecircus/android-emulator-runner@v2
-        with:
-          api-level: 29
-          script: mvn clean test -Pandroid
-      
-     
+      - name: Install Android SDK
+        run: |
+          curl -sSL https://dl.google.com/android/repository/commandlinetools-mac-8512546_latest.zip -o cmdline-tools.zip
+          unzip cmdline-tools.zip -d $HOME/Android
+          rm cmdline-tools.zip
+          yes | $HOME/Android/cmdline-tools/bin/sdkmanager --licenses
+          $HOME/Android/cmdline-tools/bin/sdkmanager --update
+          $HOME/Android/cmdline-tools/bin/sdkmanager "platform-tools" "platforms;android-29" "system-images;android-29;google_apis;x86_64"
+
+      - name: Set up Android Emulator
+        run: |
+          echo "no" | $HOME/Android/cmdline-tools/bin/avdmanager create avd --name test-emulator --package "system-images;android-29;google_apis;x86_64"
+          $HOME/Android/emulator/emulator -avd test-emulator -no-window -no-audio -gpu swiftshader_indirect &
+
+      - name: Wait for Emulator to boot
+        run: |
+          adb wait-for-device
+
+      - name: Run Appium Android Tests
+        run: mvn clean test -Pandroid
