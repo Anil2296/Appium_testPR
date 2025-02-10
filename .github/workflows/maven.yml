@@ -10,7 +10,7 @@ on:
 
 jobs:
   appium-tests:
-    runs-on: ubuntu-latest  # You can also use macos-latest depending on your setup
+    runs-on: macos-latest  # You can also use macos-latest depending on your setup
 
     steps:
       # Step 1: Checkout the repository
@@ -22,38 +22,20 @@ jobs:
         uses: actions/setup-java@v2
         with:
           java-version: '11'
+          distribution: 'zulu'
 
       # Step 3: Install dependencies (Node.js, Appium, etc.)
-      - name: Install Dependencies
+      - name: set appium
         run: |
-          sudo apt update
-          sudo apt install -y nodejs npm
-          npm install -g appium  # Install Appium globally
-
-      # Step 4: Install Android SDK if you're using an Android emulator
-      - name: Install Android SDK
-        run: |
-          sudo apt-get install -y android-sdk
-
-      # Step 5: Set up Android Emulator (optional, for Android tests)
-      - name: Set up Android Emulator
-        run: |
-          echo "y" | android update sdk --no-ui --filter tools,platform-tools,build-tools-29.0.2,android-29
-          echo "y" | android create avd --force --name test --target android-29 --abi x86_64
-          emulator -avd test -no-window &
+          npm install -g appium@v2.15 # Install Appium globally
+          appium -v
+          appium &>/dev/null &f
           
-      # Step 6: Start Appium Server
-      - name: Start Appium Server
-        run: |
-          appium &  # Start Appium server in the background
-          sleep 5  # Wait for the server to fully start
 
-      # Step 7: Run Maven TestNG Tests
-      - name: Run TestNG Appium Tests
-        run: |
-          mvn clean test  # Run Maven tests (TestNG)
-
-      # Step 8: Stop Appium server after tests are completed (optional)
-      - name: Stop Appium Server
-        run: |
-          pkill -f appium  # Kill Appium process if it's still running
+      - name: run appium android tests
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 29
+          script: mvn clean test -Pandroid
+      
+     
