@@ -20,6 +20,14 @@ jobs:
           java-version: '11'  # Specify Java 11 version
           distribution: 'zulu'  # Use Zulu OpenJDK distribution
 
+      - name: Verify Java Installation
+        run: java -version
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'  # Adjust the version if needed
+
       - name: Install dependencies
         run: |
           sudo apt update
@@ -37,11 +45,19 @@ jobs:
           # Install UIAutomator
           npm install -g appium-uiautomator2-driver
 
+      - name: Install NPM dependencies
+        run: |
+          npm install  # Make sure all dependencies in package.json are installed
+
+      - name: Show Environment Variables
+        run: printenv  # Print all environment variables for debugging
+
       - name: Start Android Emulator
         run: |
           echo "Starting Android Emulator"
           nohup $ANDROID_HOME/emulator/emulator -avd Pixel_3_API_30 -no-window -noaudio -verbose &
-          sleep 30  # Wait for emulator to boot
+          adb wait-for-device  # Ensure the emulator is ready
+          sleep 10  # Give additional time for the emulator to boot up
 
       - name: Run Appium Tests
         id: test
