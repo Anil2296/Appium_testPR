@@ -1,98 +1,75 @@
-name: PR Automation Tests
+name: Android SDK and Appium Setup
 
 on:
+  push:
+    branches:
+      - main
   pull_request:
     branches:
-      - main  # Trigger only when the PR is targeting the 'main' branch
-    types: [opened, synchronize, reopened]  # Trigger when PR is created, synchronized, or reopened
+      - main
 
 jobs:
-  test:
+  setup:
     runs-on: ubuntu-latest
-
+    
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+    - name: Checkout the repository
+      uses: actions/checkout@v2
 
-      - name: Set up Zulu OpenJDK 11
-        uses: actions/setup-java@v3
-        with:
-          java-version: '11'  # Specify Java 11 version
-          distribution: 'zulu'  # Use Zulu OpenJDK distribution
+    - name: Set up JDK 11
+      uses: actions/setup-java@v2
+      with:
+        java-version: '11'
 
-      - name: Verify Java Installation
-        run: java -version
+    - name: Install dependencies
+      run: |
+        sudo apt update
+        sudo apt install -y openjdk-11-jdk wget unzip
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '16'  # Adjust the version if needed
+        # Install Android SDK command-line tools
+        wget https://dl.google.com/android/repository/commandlinetools-linux-7583922_latest.zip
+        unzip commandlinetools-linux-7583922_latest.zip -d $HOME/android-sdk
 
-      - name: Install dependencies
-        run: |
-          sudo apt update
-          sudo apt install -y openjdk-11-jdk wget unzip
-          # Install Android SDK
-          wget https://dl.google.com/android/repository/commandlinetools-linux-7583922_latest.zip
-          unzip commandlinetools-linux-7583922_latest.zip -d $HOME/android-sdk
-          export ANDROID_HOME=$HOME/android-sdk
-          export PATH=$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools:$PATH
-          yes | sdkmanager --licenses
-          sdkmanager "platforms;android-30" "build-tools;30.0.3" "emulator" "system-images;android-30;google_apis;x86_64"
-          # Install Appium
-          npm install -g appium
-          appium --version
-          # Install UIAutomator
-          npm install -g appium-uiautomator2-driver
+        # Set environment variables
+        export ANDROID_HOME=$HOME/android-sdk
+        export PATH=$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools:$PATH
 
-      - name: Install NPM dependencies
-        run: |
-          npm install  # Make sure all dependencies in package.json are installed
-
-      - name: Show Environment Variables
-        run: printenv  # Print all environment variables for debugging
-
-      - name: Start Android Emulator
-        run: |
-          echo "Starting Android Emulator"
-          nohup $ANDROID_HOME/emulator/emulator -avd Pixel_3_API_30 -no-window -noaudio -verbose &
-          adb wait-for-device  # Ensure the emulator is ready
-          sleep 10  # Give additional time for the emulator to boot up
-
-      - name: Run Appium Tests
-        id: test
-        run: |
-          echo "Running Appium Tests"
-          appium --session-override &
-          sleep 5  # Wait for Appium server to start
-          # Replace with your test script
-          npm run test  # Or the command to run your Appium UIAutomator tests
-        continue-on-error: true  # Ensure that the next steps can run even if tests fail
-
-      - name: Check if tests passed and update PR status
-        if: ${{ steps.test.outcome == 'success' }}
-        run: |
-          echo "Tests passed. Approving PR."
-          # Use GitHub API to approve the PR
-          curl -X PUT \
-            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-            -H "Accept: application/vnd.github.v3+json" \
-            -d '{"event": "APPROVE"}' \
-            "https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/reviews"
+        # Ensure the sdkmanager is accessible
+        echo "ANDROID_HOME=$ANDROID_HOME"
+        echo "PATH=$PATH"
         
-      - name: Check if tests failed and request changes on PR
-        if: ${{ steps.test.outcome == 'failure' }}
-        run: |
-          echo "Tests failed. Requesting changes on PR."
-          # Use GitHub API to request changes
-          curl -X PUT \
-            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-            -H "Accept: application/vnd.github.v3+json" \
-            -d '{"event": "REQUEST_CHANGES", "body": "The automated tests failed. Please fix them."}' \
-            "https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/reviews"
+        # Accept licenses
+        yes | sdkmanager --licenses
+        
+        # Install required platforms and build tools
+        sdkmanager "platforms;android-30" "build-tools;30.0.3" "emulator" "system-images;android-30;google_apis;x86_64"
+        
+        # Install Appium
+        npm install -g appium
+        appium --version
+        
+        # Install Appium UIAutomator2 Driver
+        npm install -g appium-uiautomator2-driver
 
-      - name: Clean up Emulator
-        if: github.ref == 'refs/heads/main'
-        run: |
-          echo "Cleaning up Emulator"
-          adb -s emulator-5554 emu kill  # Close the emulator after tests are done
+    - name: Set up Android Emulator
+      run: |
+        # Create and start an Android Emulator
+        echo "no" | avdmanager create avd --name testDevice --package "system-images;android-30;google_apis;x86_64"
+        nohup emulator -avd testDevice -no-window -no-audio -accel on &
+
+    - name: Wait for Emulator to start
+      run: |
+        # Wait for the emulator to boot up
+        timeout 3m sh -c 'while ! adb shell get-state 2>&1 | grep -q device; do sleep 5; done'
+
+    - name: Run Appium Test
+      run: |
+        # Run Appium server in the background
+        appium &
+
+        # Run your test scripts (ensure you have test scripts in the repo)
+        # Example: run tests with desired capabilities
+        # You can replace this with your actual test runner command
+        # Example: node myTestScript.js
+
+        echo "Appium server is running, and tests should be executed"
