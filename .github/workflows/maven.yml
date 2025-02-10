@@ -1,76 +1,59 @@
-name: Android SDK and Appium Setup
+name: Appium TestNG Tests
 
 on:
   push:
     branches:
-      - main
+      - main  # Trigger on push to main (change if needed)
   pull_request:
     branches:
-      - main
+      - main  # Trigger on PRs targeting the main branch
 
 jobs:
-  setup:
-    runs-on: ubuntu-latest
-    
+  appium-tests:
+    runs-on: ubuntu-latest  # You can also use macos-latest depending on your setup
+
     steps:
-    - name: Checkout the repository
-      uses: actions/checkout@v2
+      # Step 1: Checkout the repository
+      - name: Checkout Repository
+        uses: actions/checkout@v2
 
-    - name: Set up JDK 11
-      uses: actions/setup-java@v2
-      with:
-        java-version: '11'
-        distribution: 'zulu'
+      # Step 2: Set up Java (Required for Appium and TestNG)
+      - name: Set up JDK 11
+        uses: actions/setup-java@v2
+        with:
+          java-version: '11'
 
-    - name: Install dependencies
-      run: |
-        sudo apt update
-        sudo apt install -y openjdk-11-jdk wget unzip
+      # Step 3: Install dependencies (Node.js, Appium, etc.)
+      - name: Install Dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y nodejs npm
+          npm install -g appium  # Install Appium globally
 
-        # Install Android SDK command-line tools
-        wget https://dl.google.com/android/repository/commandlinetools-linux-7583922_latest.zip
-        unzip commandlinetools-linux-7583922_latest.zip -d $HOME/android-sdk
+      # Step 4: Install Android SDK if you're using an Android emulator
+      - name: Install Android SDK
+        run: |
+          sudo apt-get install -y android-sdk
 
-        # Set environment variables for Android SDK
-        export ANDROID_HOME=$HOME/android-sdk
-        export PATH=$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools:$PATH
-        
-        # Ensure sdkmanager is available
-        echo "ANDROID_HOME=$ANDROID_HOME"
-        echo "PATH=$PATH"
-        
-        # Accept SDK licenses
-        yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses
-        
-        # Install required platforms and build tools
-        $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "platforms;android-30" "build-tools;30.0.3" "emulator" "system-images;android-30;google_apis;x86_64"
-        
-        # Install Appium
-        npm install -g appium
-        appium --version
-        
-        # Install Appium UIAutomator2 Driver
-        npm install -g appium-uiautomator2-driver
+      # Step 5: Set up Android Emulator (optional, for Android tests)
+      - name: Set up Android Emulator
+        run: |
+          echo "y" | android update sdk --no-ui --filter tools,platform-tools,build-tools-29.0.2,android-29
+          echo "y" | android create avd --force --name test --target android-29 --abi x86_64
+          emulator -avd test -no-window &
+          
+      # Step 6: Start Appium Server
+      - name: Start Appium Server
+        run: |
+          appium &  # Start Appium server in the background
+          sleep 5  # Wait for the server to fully start
 
-    - name: Set up Android Emulator
-      run: |
-        # Create and start an Android Emulator
-        echo "no" | $ANDROID_HOME/cmdline-tools/latest/bin/avdmanager create avd --name testDevice --package "system-images;android-30;google_apis;x86_64"
-        nohup emulator -avd testDevice -no-window -no-audio -accel on &
+      # Step 7: Run Maven TestNG Tests
+      - name: Run TestNG Appium Tests
+        run: |
+          mvn clean test  # Run Maven tests (TestNG)
 
-    - name: Wait for Emulator to start
-      run: |
-        # Wait for the emulator to boot up
-        timeout 3m sh -c 'while ! adb shell get-state 2>&1 | grep -q device; do sleep 5; done'
-
-    - name: Run Appium Test
-      run: |
-        # Run Appium server in the background
-        appium &
-
-        # Run your test scripts (ensure you have test scripts in the repo)
-        # Example: run tests with desired capabilities
-        # You can replace this with your actual test runner command
-        # Example: node myTestScript.js
-
-        echo "Appium server is running, and tests should be executed"
+      # Step 8: Stop Appium server after tests are completed (optional)
+      - name: Stop Appium Server
+        run: |
+          pkill -f appium  # Kill Appium process if it's still running
