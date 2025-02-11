@@ -45,12 +45,16 @@ jobs:
           echo "ANDROID_HOME=$ANDROID_HOME" >> $GITHUB_ENV
           echo "PATH=$PATH" >> $GITHUB_ENV
 
-      # Step 5: Install required Android SDK packages (e.g., platform-tools, build-tools, AVD)
-      - name: Install Android SDK packages
+      # Step 5: Manually download required Android SDK components
+      - name: Download required Android SDK components
         run: |
-          sdkmanager "platform-tools" "platforms;android-29" "build-tools;29.0.3"
-          sdkmanager "system-images;android-29;google_apis;x86_64"
-          sdkmanager --licenses
+          wget https://dl.google.com/android/repository/platform-tools_r30.0.5-linux.zip -O /tmp/platform-tools.zip
+          wget https://dl.google.com/android/repository/sys-img/android-29-google_apis-x86_64-1.zip -O /tmp/system-images.zip
+          sudo unzip /tmp/platform-tools.zip -d /usr/local/android-sdk
+          sudo unzip /tmp/system-images.zip -d /usr/local/android-sdk
+          sudo rm /tmp/platform-tools.zip
+          sudo rm /tmp/system-images.zip
+          echo "SDK components downloaded and unzipped."
 
       # Step 6: Create and start the Android emulator
       - name: Create and start emulator
