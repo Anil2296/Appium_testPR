@@ -32,24 +32,25 @@ jobs:
           appium &>/dev/null &
           sleep 5
 
-      # Step 4: Install Android SDK tools
+      # Step 4: Install Android SDK (Command-line tools only)
       - name: Install Android SDK
         run: |
           sudo apt-get update
-          sudo apt-get install -y unzip
+          sudo apt-get install -y unzip wget
           wget https://dl.google.com/android/repository/commandlinetools-linux-7583922_latest.zip -O /tmp/cmdline-tools.zip
           sudo unzip /tmp/cmdline-tools.zip -d /usr/local/android-sdk
           sudo rm /tmp/cmdline-tools.zip
           export ANDROID_HOME=/usr/local/android-sdk
-          export PATH=$ANDROID_HOME/cmdline-tools/latest/bin:$PATH
-          sudo sdkmanager --update
+          export PATH=$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools:$PATH
+          echo "ANDROID_HOME=$ANDROID_HOME" >> $GITHUB_ENV
+          echo "PATH=$PATH" >> $GITHUB_ENV
 
       # Step 5: Install required Android SDK packages (e.g., platform-tools, build-tools, AVD)
       - name: Install Android SDK packages
         run: |
-          sudo sdkmanager "platform-tools" "platforms;android-29" "build-tools;29.0.3"
-          sudo sdkmanager "system-images;android-29;google_apis;x86_64"
-          sudo sdkmanager --licenses
+          sdkmanager "platform-tools" "platforms;android-29" "build-tools;29.0.3"
+          sdkmanager "system-images;android-29;google_apis;x86_64"
+          sdkmanager --licenses
 
       # Step 6: Create and start the Android emulator
       - name: Create and start emulator
