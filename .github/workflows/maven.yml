@@ -24,15 +24,20 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
       # Step 3: Install Node.js and Appium globally
       - name: Setup Appium
         run: |
           npm install -g appium@v2.15
           appium -v
           appium &>/dev/null &
-          sleep 5
+          sleep 10
 
-     
 
       # Step 5: Set up Android Emulator using the reactivecircus action
       - name: Set up Android Emulator
