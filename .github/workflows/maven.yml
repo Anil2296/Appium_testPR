@@ -47,9 +47,9 @@ jobs:
       # Step 5: Install required Android SDK packages (e.g., platform-tools, build-tools, AVD)
       - name: Install Android SDK packages
         run: |
-          sdkmanager "platform-tools" "platforms;android-29" "build-tools;29.0.3"
-          sdkmanager "system-images;android-29;google_apis;x86_64"
-          sdkmanager --licenses
+          sudo sdkmanager "platform-tools" "platforms;android-29" "build-tools;29.0.3"
+          sudo sdkmanager "system-images;android-29;google_apis;x86_64"
+          sudo sdkmanager --licenses
 
       # Step 6: Create and start the Android emulator
       - name: Create and start emulator
