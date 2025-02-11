@@ -42,7 +42,7 @@ jobs:
           sudo rm /tmp/cmdline-tools.zip
           export ANDROID_HOME=/usr/local/android-sdk
           export PATH=$ANDROID_HOME/cmdline-tools/latest/bin:$PATH
-          sdkmanager --update
+          sudo sdkmanager --update
 
       # Step 5: Install required Android SDK packages (e.g., platform-tools, build-tools, AVD)
       - name: Install Android SDK packages
