@@ -32,18 +32,30 @@ jobs:
           appium &>/dev/null &
           sleep 5
 
-      # Step 4: Enable KVM for hardware acceleration (if needed)
-      - name: Enable KVM
+      # Step 4: Install Android SDK tools
+      - name: Install Android SDK
         run: |
-          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
-          sudo udevadm control --reload-rules
-          sudo udevadm trigger --name-match=kvm
+          sudo apt-get update
+          sudo apt-get install -y unzip
+          wget https://dl.google.com/android/repository/commandlinetools-linux-7583922_latest.zip -O /tmp/cmdline-tools.zip
+          sudo unzip /tmp/cmdline-tools.zip -d /usr/local/android-sdk
+          sudo rm /tmp/cmdline-tools.zip
+          export ANDROID_HOME=/usr/local/android-sdk
+          export PATH=$ANDROID_HOME/cmdline-tools/latest/bin:$PATH
+          sdkmanager --update
 
-      # Step 5: Create and start the Android emulator
+      # Step 5: Install required Android SDK packages (e.g., platform-tools, build-tools, AVD)
+      - name: Install Android SDK packages
+        run: |
+          sdkmanager "platform-tools" "platforms;android-29" "build-tools;29.0.3"
+          sdkmanager "system-images;android-29;google_apis;x86_64"
+          sdkmanager --licenses
+
+      # Step 6: Create and start the Android emulator
       - name: Create and start emulator
         run: |
           # Create an Android Virtual Device (AVD) with API level 29
-          echo no | android create avd --force -n test-emu -t android-29 --abi x86_64
+          echo no | avdmanager create avd --force -n test-emu -k "system-images;android-29;google_apis;x86_64"
           
           # Start the emulator
           emulator -avd test-emu -no-window -no-audio -no-boot-anim -gpu off &
@@ -57,10 +69,10 @@ jobs:
           # Optional: Add a delay to ensure the emulator is fully ready before running tests
           sleep 15
 
-      # Step 6: Run Appium Tests (with Maven)
+      # Step 7: Run Appium Tests
       - name: Run Appium Tests
         run: mvn clean test
 
-      # Step 7: Stop the emulator after the tests are finished
+      # Step 8: Stop the emulator after tests
       - name: Stop Emulator
         run: adb emu kill
