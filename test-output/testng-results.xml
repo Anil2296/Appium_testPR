@@ -1,211 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testng-results ignored="0" total="1" passed="0" failed="0" skipped="1">
+<testng-results ignored="0" total="1" passed="1" failed="0" skipped="0">
   <reporter-output>
   </reporter-output>
-  <suite started-at="2025-02-10T19:57:10 IST" name="Default suite" finished-at="2025-02-10T19:57:30 IST" duration-ms="20251">
+  <suite started-at="2025-02-11T11:09:49 IST" name="Default suite" finished-at="2025-02-11T11:10:14 IST" duration-ms="25385">
     <groups>
     </groups>
-    <test started-at="2025-02-10T19:57:10 IST" name="Default test" finished-at="2025-02-10T19:57:30 IST" duration-ms="20251">
-      <class name="anil123.Dragdrop">
-        <test-method is-config="true" signature="Configure()[pri:0, instance:anil123.Dragdrop@6150c3ec]" started-at="2025-02-10T19:57:10 IST" name="Configure" finished-at="2025-02-10T19:57:30 IST" duration-ms="20204" status="FAIL">
-          <exception class="io.appium.java_client.service.local.AppiumServerHasNotBeenStartedLocallyException">
-            <message>
-              <![CDATA[Appium HTTP server is not listening at http://127.0.0.1:4723/ after 20000 ms timeout. Consider increasing the server startup timeout value and check the server log for possible error messages occurrences.
-Node.js executable path: /usr/local/bin/node
-Arguments: [/usr/local/lib/node_modules/appium/build/lib/main.js, --port, 4723, --address, 127.0.0.1]
-Server log: [38;5;112m[Appium][0m Welcome to Appium v2.15.0
-[38;5;112m[Appium][0m Non-default server args:
-[38;5;112m[Appium][0m { address: [32m'127.0.0.1'[39m }
-[38;5;112m[Appium][0m The autodetected Appium home path: /Users/naanilku/.appium
-[38;5;112m[Appium][0m Attempting to load driver uiautomator2...
-[38;5;112m[Appium][0m Requiring driver at /Users/naanilku/.appium/node_modules/appium-uiautomator2-driver/build/index.js
-[38;5;112m[Appium][0m AndroidUiautomator2Driver has been successfully loaded in 0.567s
-[38;5;86m[HTTP][0m Could not start REST http interface listener. The requested port may already be in use. Please make sure there is no other instance of this server running already.
-[38;5;112m[Appium][0m Could not configure Appium server. It's possible that a driver or plugin tried to update the server and failed. Original error: listen EADDRINUSE: address already in use 127.0.0.1:4723
-[38;5;112m[Appium][0m Error: listen EADDRINUSE: address already in use 127.0.0.1:4723
-    at Server.setupListenHandle [as _listen2] (node:net:1937:16)
-    at listenInCluster (node:net:1994:12)
-    at node:net:2203:7
-    at processTicksAndRejections (node:internal/process/task_queues:90:21)
-]]>
-            </message>
-            <full-stacktrace>
-              <![CDATA[io.appium.java_client.service.local.AppiumServerHasNotBeenStartedLocallyException: Appium HTTP server is not listening at http://127.0.0.1:4723/ after 20000 ms timeout. Consider increasing the server startup timeout value and check the server log for possible error messages occurrences.
-Node.js executable path: /usr/local/bin/node
-Arguments: [/usr/local/lib/node_modules/appium/build/lib/main.js, --port, 4723, --address, 127.0.0.1]
-Server log: [38;5;112m[Appium][0m Welcome to Appium v2.15.0
-[38;5;112m[Appium][0m Non-default server args:
-[38;5;112m[Appium][0m { address: [32m'127.0.0.1'[39m }
-[38;5;112m[Appium][0m The autodetected Appium home path: /Users/naanilku/.appium
-[38;5;112m[Appium][0m Attempting to load driver uiautomator2...
-[38;5;112m[Appium][0m Requiring driver at /Users/naanilku/.appium/node_modules/appium-uiautomator2-driver/build/index.js
-[38;5;112m[Appium][0m AndroidUiautomator2Driver has been successfully loaded in 0.567s
-[38;5;86m[HTTP][0m Could not start REST http interface listener. The requested port may already be in use. Please make sure there is no other instance of this server running already.
-[38;5;112m[Appium][0m Could not configure Appium server. It's possible that a driver or plugin tried to update the server and failed. Original error: listen EADDRINUSE: address already in use 127.0.0.1:4723
-[38;5;112m[Appium][0m Error: listen EADDRINUSE: address already in use 127.0.0.1:4723
-    at Server.setupListenHandle [as _listen2] (node:net:1937:16)
-    at listenInCluster (node:net:1994:12)
-    at node:net:2203:7
-    at processTicksAndRejections (node:internal/process/task_queues:90:21)
-
-at io.appium.java_client.service.local.AppiumDriverLocalService.start(AppiumDriverLocalService.java:192)
-at anil123.BaseTest.Configure(BaseTest.java:29)
-at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
-at java.base/java.lang.reflect.Method.invoke(Method.java:580)
-at org.testng.internal.invokers.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:141)
-at org.testng.internal.invokers.MethodInvocationHelper.invokeMethodConsideringTimeout(MethodInvocationHelper.java:71)
-at org.testng.internal.invokers.ConfigInvoker.invokeConfigurationMethod(ConfigInvoker.java:400)
-at org.testng.internal.invokers.ConfigInvoker.invokeConfigurations(ConfigInvoker.java:333)
-at org.testng.internal.invokers.TestMethodWorker.invokeBeforeClassMethods(TestMethodWorker.java:188)
-at org.testng.internal.invokers.TestMethodWorker.run(TestMethodWorker.java:128)
-at java.base/java.util.ArrayList.forEach(ArrayList.java:1597)
-at org.testng.TestRunner.privateRun(TestRunner.java:739)
-at org.testng.TestRunner.run(TestRunner.java:614)
-at org.testng.SuiteRunner.runTest(SuiteRunner.java:421)
-at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:413)
-at org.testng.SuiteRunner.privateRun(SuiteRunner.java:373)
-at org.testng.SuiteRunner.run(SuiteRunner.java:312)
-at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
-at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:95)
-at org.testng.TestNG.runSuitesSequentially(TestNG.java:1274)
-at org.testng.TestNG.runSuitesLocally(TestNG.java:1208)
-at org.testng.TestNG.runSuites(TestNG.java:1112)
-at org.testng.TestNG.run(TestNG.java:1079)
-at org.testng.remote.AbstractRemoteTestNG.run(AbstractRemoteTestNG.java:115)
-at org.testng.remote.RemoteTestNG.initAndRun(RemoteTestNG.java:293)
-at org.testng.remote.RemoteTestNG.main(RemoteTestNG.java:91)
-Caused by: io.appium.java_client.service.local.AppiumServerAvailabilityChecker$ConnectionTimeout: ConnectionTimeout
-at io.appium.java_client.service.local.AppiumServerAvailabilityChecker.waitUntilAvailable(AppiumServerAvailabilityChecker.java:72)
-at io.appium.java_client.service.local.AppiumDriverLocalService.ping(AppiumDriverLocalService.java:144)
-at io.appium.java_client.service.local.AppiumDriverLocalService.start(AppiumDriverLocalService.java:185)
-... 25 more
-Caused by: java.net.ConnectException: Connection refused
-at java.base/sun.nio.ch.Net.pollConnect(Native Method)
-at java.base/sun.nio.ch.Net.pollConnectNow(Net.java:682)
-at java.base/sun.nio.ch.NioSocketImpl.timedFinishConnect(NioSocketImpl.java:549)
-at java.base/sun.nio.ch.NioSocketImpl.connect(NioSocketImpl.java:592)
-at java.base/java.net.Socket.connect(Socket.java:760)
-at java.base/sun.net.NetworkClient.doConnect(NetworkClient.java:178)
-at java.base/sun.net.www.http.HttpClient.openServer(HttpClient.java:531)
-at java.base/sun.net.www.http.HttpClient.openServer(HttpClient.java:636)
-at java.base/sun.net.www.http.HttpClient.<init>(HttpClient.java:280)
-at java.base/sun.net.www.http.HttpClient.New(HttpClient.java:386)
-at java.base/sun.net.www.http.HttpClient.New(HttpClient.java:408)
-at java.base/sun.net.www.protocol.http.HttpURLConnection.getNewHttpClient(HttpURLConnection.java:1310)
-at java.base/sun.net.www.protocol.http.HttpURLConnection.plainConnect0(HttpURLConnection.java:1243)
-at java.base/sun.net.www.protocol.http.HttpURLConnection.plainConnect(HttpURLConnection.java:1129)
-at java.base/sun.net.www.protocol.http.HttpURLConnection.connect(HttpURLConnection.java:1058)
-at io.appium.java_client.service.local.AppiumServerAvailabilityChecker.connectToUrl(AppiumServerAvailabilityChecker.java:79)
-at io.appium.java_client.service.local.AppiumServerAvailabilityChecker.waitUntilAvailable(AppiumServerAvailabilityChecker.java:61)
-... 27 more
-]]>
-            </full-stacktrace>
-          </exception> <!-- io.appium.java_client.service.local.AppiumServerHasNotBeenStartedLocallyException -->
+    <test started-at="2025-02-11T11:09:49 IST" name="Default test" finished-at="2025-02-11T11:10:14 IST" duration-ms="25385">
+      <class name="anil123.LongPress">
+        <test-method is-config="true" signature="Configure()[pri:0, instance:anil123.LongPress@6150c3ec]" started-at="2025-02-11T11:09:49 IST" name="Configure" finished-at="2025-02-11T11:09:56 IST" duration-ms="7459" status="PASS">
           <reporter-output>
           </reporter-output>
         </test-method> <!-- Configure -->
-        <test-method signature="Drag()[pri:0, instance:anil123.Dragdrop@6150c3ec]" started-at="2025-02-10T19:57:30 IST" name="Drag" finished-at="2025-02-10T19:57:30 IST" duration-ms="0" status="SKIP">
-          <exception class="io.appium.java_client.service.local.AppiumServerHasNotBeenStartedLocallyException">
-            <message>
-              <![CDATA[Appium HTTP server is not listening at http://127.0.0.1:4723/ after 20000 ms timeout. Consider increasing the server startup timeout value and check the server log for possible error messages occurrences.
-Node.js executable path: /usr/local/bin/node
-Arguments: [/usr/local/lib/node_modules/appium/build/lib/main.js, --port, 4723, --address, 127.0.0.1]
-Server log: [38;5;112m[Appium][0m Welcome to Appium v2.15.0
-[38;5;112m[Appium][0m Non-default server args:
-[38;5;112m[Appium][0m { address: [32m'127.0.0.1'[39m }
-[38;5;112m[Appium][0m The autodetected Appium home path: /Users/naanilku/.appium
-[38;5;112m[Appium][0m Attempting to load driver uiautomator2...
-[38;5;112m[Appium][0m Requiring driver at /Users/naanilku/.appium/node_modules/appium-uiautomator2-driver/build/index.js
-[38;5;112m[Appium][0m AndroidUiautomator2Driver has been successfully loaded in 0.567s
-[38;5;86m[HTTP][0m Could not start REST http interface listener. The requested port may already be in use. Please make sure there is no other instance of this server running already.
-[38;5;112m[Appium][0m Could not configure Appium server. It's possible that a driver or plugin tried to update the server and failed. Original error: listen EADDRINUSE: address already in use 127.0.0.1:4723
-[38;5;112m[Appium][0m Error: listen EADDRINUSE: address already in use 127.0.0.1:4723
-    at Server.setupListenHandle [as _listen2] (node:net:1937:16)
-    at listenInCluster (node:net:1994:12)
-    at node:net:2203:7
-    at processTicksAndRejections (node:internal/process/task_queues:90:21)
-]]>
-            </message>
-            <full-stacktrace>
-              <![CDATA[io.appium.java_client.service.local.AppiumServerHasNotBeenStartedLocallyException: Appium HTTP server is not listening at http://127.0.0.1:4723/ after 20000 ms timeout. Consider increasing the server startup timeout value and check the server log for possible error messages occurrences.
-Node.js executable path: /usr/local/bin/node
-Arguments: [/usr/local/lib/node_modules/appium/build/lib/main.js, --port, 4723, --address, 127.0.0.1]
-Server log: [38;5;112m[Appium][0m Welcome to Appium v2.15.0
-[38;5;112m[Appium][0m Non-default server args:
-[38;5;112m[Appium][0m { address: [32m'127.0.0.1'[39m }
-[38;5;112m[Appium][0m The autodetected Appium home path: /Users/naanilku/.appium
-[38;5;112m[Appium][0m Attempting to load driver uiautomator2...
-[38;5;112m[Appium][0m Requiring driver at /Users/naanilku/.appium/node_modules/appium-uiautomator2-driver/build/index.js
-[38;5;112m[Appium][0m AndroidUiautomator2Driver has been successfully loaded in 0.567s
-[38;5;86m[HTTP][0m Could not start REST http interface listener. The requested port may already be in use. Please make sure there is no other instance of this server running already.
-[38;5;112m[Appium][0m Could not configure Appium server. It's possible that a driver or plugin tried to update the server and failed. Original error: listen EADDRINUSE: address already in use 127.0.0.1:4723
-[38;5;112m[Appium][0m Error: listen EADDRINUSE: address already in use 127.0.0.1:4723
-    at Server.setupListenHandle [as _listen2] (node:net:1937:16)
-    at listenInCluster (node:net:1994:12)
-    at node:net:2203:7
-    at processTicksAndRejections (node:internal/process/task_queues:90:21)
-
-at io.appium.java_client.service.local.AppiumDriverLocalService.start(AppiumDriverLocalService.java:192)
-at anil123.BaseTest.Configure(BaseTest.java:29)
-at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
-at java.base/java.lang.reflect.Method.invoke(Method.java:580)
-at org.testng.internal.invokers.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:141)
-at org.testng.internal.invokers.MethodInvocationHelper.invokeMethodConsideringTimeout(MethodInvocationHelper.java:71)
-at org.testng.internal.invokers.ConfigInvoker.invokeConfigurationMethod(ConfigInvoker.java:400)
-at org.testng.internal.invokers.ConfigInvoker.invokeConfigurations(ConfigInvoker.java:333)
-at org.testng.internal.invokers.TestMethodWorker.invokeBeforeClassMethods(TestMethodWorker.java:188)
-at org.testng.internal.invokers.TestMethodWorker.run(TestMethodWorker.java:128)
-at java.base/java.util.ArrayList.forEach(ArrayList.java:1597)
-at org.testng.TestRunner.privateRun(TestRunner.java:739)
-at org.testng.TestRunner.run(TestRunner.java:614)
-at org.testng.SuiteRunner.runTest(SuiteRunner.java:421)
-at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:413)
-at org.testng.SuiteRunner.privateRun(SuiteRunner.java:373)
-at org.testng.SuiteRunner.run(SuiteRunner.java:312)
-at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
-at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:95)
-at org.testng.TestNG.runSuitesSequentially(TestNG.java:1274)
-at org.testng.TestNG.runSuitesLocally(TestNG.java:1208)
-at org.testng.TestNG.runSuites(TestNG.java:1112)
-at org.testng.TestNG.run(TestNG.java:1079)
-at org.testng.remote.AbstractRemoteTestNG.run(AbstractRemoteTestNG.java:115)
-at org.testng.remote.RemoteTestNG.initAndRun(RemoteTestNG.java:293)
-at org.testng.remote.RemoteTestNG.main(RemoteTestNG.java:91)
-Caused by: io.appium.java_client.service.local.AppiumServerAvailabilityChecker$ConnectionTimeout: ConnectionTimeout
-at io.appium.java_client.service.local.AppiumServerAvailabilityChecker.waitUntilAvailable(AppiumServerAvailabilityChecker.java:72)
-at io.appium.java_client.service.local.AppiumDriverLocalService.ping(AppiumDriverLocalService.java:144)
-at io.appium.java_client.service.local.AppiumDriverLocalService.start(AppiumDriverLocalService.java:185)
-... 25 more
-Caused by: java.net.ConnectException: Connection refused
-at java.base/sun.nio.ch.Net.pollConnect(Native Method)
-at java.base/sun.nio.ch.Net.pollConnectNow(Net.java:682)
-at java.base/sun.nio.ch.NioSocketImpl.timedFinishConnect(NioSocketImpl.java:549)
-at java.base/sun.nio.ch.NioSocketImpl.connect(NioSocketImpl.java:592)
-at java.base/java.net.Socket.connect(Socket.java:760)
-at java.base/sun.net.NetworkClient.doConnect(NetworkClient.java:178)
-at java.base/sun.net.www.http.HttpClient.openServer(HttpClient.java:531)
-at java.base/sun.net.www.http.HttpClient.openServer(HttpClient.java:636)
-at java.base/sun.net.www.http.HttpClient.<init>(HttpClient.java:280)
-at java.base/sun.net.www.http.HttpClient.New(HttpClient.java:386)
-at java.base/sun.net.www.http.HttpClient.New(HttpClient.java:408)
-at java.base/sun.net.www.protocol.http.HttpURLConnection.getNewHttpClient(HttpURLConnection.java:1310)
-at java.base/sun.net.www.protocol.http.HttpURLConnection.plainConnect0(HttpURLConnection.java:1243)
-at java.base/sun.net.www.protocol.http.HttpURLConnection.plainConnect(HttpURLConnection.java:1129)
-at java.base/sun.net.www.protocol.http.HttpURLConnection.connect(HttpURLConnection.java:1058)
-at io.appium.java_client.service.local.AppiumServerAvailabilityChecker.connectToUrl(AppiumServerAvailabilityChecker.java:79)
-at io.appium.java_client.service.local.AppiumServerAvailabilityChecker.waitUntilAvailable(AppiumServerAvailabilityChecker.java:61)
-... 27 more
-]]>
-            </full-stacktrace>
-          </exception> <!-- io.appium.java_client.service.local.AppiumServerHasNotBeenStartedLocallyException -->
+        <test-method signature="LongPressing()[pri:0, instance:anil123.LongPress@6150c3ec]" started-at="2025-02-11T11:09:56 IST" name="LongPressing" finished-at="2025-02-11T11:10:14 IST" duration-ms="17623" status="PASS">
           <reporter-output>
           </reporter-output>
-        </test-method> <!-- Drag -->
-        <test-method is-config="true" signature="teardown()[pri:0, instance:anil123.Dragdrop@6150c3ec]" started-at="2025-02-10T19:57:30 IST" name="teardown" finished-at="2025-02-10T19:57:30 IST" duration-ms="0" status="SKIP">
+        </test-method> <!-- LongPressing -->
+        <test-method is-config="true" signature="teardown()[pri:0, instance:anil123.LongPress@6150c3ec]" started-at="2025-02-11T11:10:14 IST" name="teardown" finished-at="2025-02-11T11:10:14 IST" duration-ms="286" status="PASS">
           <reporter-output>
           </reporter-output>
         </test-method> <!-- teardown -->
-      </class> <!-- anil123.Dragdrop -->
+      </class> <!-- anil123.LongPress -->
     </test> <!-- Default test -->
   </suite> <!-- Default suite -->
 </testng-results>
