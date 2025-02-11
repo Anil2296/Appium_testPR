@@ -32,26 +32,27 @@ jobs:
           appium &>/dev/null &
           sleep 5
 
-      # Step 4: Install Android SDK (Command-line tools only)
-      - name: Install Android SDK
+      # Step 4: Install Android SDK Command Line Tools
+      - name: Install Android SDK Command Line Tools
         run: |
           sudo apt-get update
           sudo apt-get install -y unzip wget
           
-          # Download the Android Command Line Tools
+          # Download and unzip Android command-line tools
           wget https://dl.google.com/android/repository/commandlinetools-linux-7583922_latest.zip -O /tmp/cmdline-tools.zip
           sudo unzip /tmp/cmdline-tools.zip -d /usr/local/android-sdk
           sudo rm /tmp/cmdline-tools.zip
           
-          # Set up environment variables
-          export ANDROID_HOME=/usr/local/android-sdk
-          export PATH=$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools:$PATH
+          # Set up environment variables for Android SDK
+          echo "ANDROID_HOME=/usr/local/android-sdk" >> $GITHUB_ENV
+          echo "PATH=$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools:$PATH" >> $GITHUB_ENV
           
-          # Save environment variables to GitHub Actions environment
-          echo "ANDROID_HOME=$ANDROID_HOME" >> $GITHUB_ENV
-          echo "PATH=$PATH" >> $GITHUB_ENV
+          # Verify the path and tools
+          echo $ANDROID_HOME
+          echo $PATH
+          ls $ANDROID_HOME/cmdline-tools/latest/bin
 
-      # Step 5: Install SDK Packages (via sdkmanager)
+      # Step 5: Install Android 29 SDK
       - name: Install Android 29 System Image and Platform Tools
         run: |
           # Ensure sdkmanager is available and install required components
@@ -81,5 +82,4 @@ jobs:
         run: mvn clean test
 
       # Step 8: Stop the emulator after tests
-      - name: Stop Emulator
-        run: adb emu kill
+      - name:
