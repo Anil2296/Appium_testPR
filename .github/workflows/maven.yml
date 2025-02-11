@@ -3,77 +3,65 @@ name: Appium TestNG Tests
 on:
   push:
     branches:
-      - main  # Trigger on push to main (change if needed)
+      - main
   pull_request:
     branches:
-      - main  # Trigger on PRs targeting the main branch
+      - main
 
 jobs:
   appium-tests:
-    runs-on: macos-latest  # You can also use macos-latest depending on your setup
+    runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Checkout the repository
       - name: Checkout Repository
         uses: actions/checkout@v2
 
-      # Step 2: Set up JDK 11 (Required for Appium and TestNG)
       - name: Set up JDK 11
         uses: actions/setup-java@v2
         with:
           java-version: '11'
-          distribution: 'zulu'
 
-      # Step 3: Set up Node.js
-      - name: Set up Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: '16'
-
-      # Step 4: Install Appium globally
-      - name: Install Appium
+      - name: Install Dependencies
         run: |
-          npm install -g appium@v2.15
-          appium -v
-          appium &>/dev/null &
+          sudo apt update
+          sudo apt install -y nodejs npm
+          npm install -g appium
 
-      # Step 5: Install Android SDK
       - name: Install Android SDK
         run: |
-          # Download and extract the command line tools
-          curl -sSL https://dl.google.com/android/repository/commandlinetools-mac-8512546_latest.zip -o cmdline-tools.zip
-          mkdir -p $HOME/Android/cmdline-tools
-          unzip cmdline-tools.zip -d $HOME/Android/cmdline-tools/
-          rm cmdline-tools.zip
-          
-          # Accept licenses and install required components
-          yes | $HOME/Android/cmdline-tools/bin/sdkmanager --licenses
-          $HOME/Android/cmdline-tools/bin/sdkmanager --update
-          $HOME/Android/cmdline-tools/bin/sdkmanager "platform-tools" "platforms;android-29" "system-images;android-29;google_apis;x86_64"
+          # Install necessary dependencies for Android SDK
+          sudo apt-get install -y wget unzip lib32stdc++6 lib32z1
 
-      # Step 6: Set the ANDROID_SDK_ROOT environment variable
-      - name: Set ANDROID_SDK_ROOT
-        run: echo "ANDROID_SDK_ROOT=$HOME/Android" >> $GITHUB_ENV
+          # Download the Android SDK Command Line Tools
+          wget https://dl.google.com/android/repository/commandlinetools-linux-6858069_latest.zip
 
-      # Step 7: Set up Android Emulator
-      - name: Set up Android Emulator
+          # Unzip the downloaded tools
+          sudo unzip commandlinetools-linux-6858069_latest.zip -d /usr/local/android-sdk
+
+          # Set environment variables
+          echo "export ANDROID_SDK_ROOT=/usr/local/android-sdk" >> $GITHUB_ENV
+          echo "export PATH=$PATH:/usr/local/android-sdk/cmdline-tools/bin" >> $GITHUB_ENV
+
+          # Accept licenses (run sdkmanager command)
+          yes | sdkmanager --licenses
+          sdkmanager "platform-tools" "tools" "build-tools;29.0.2" "android-29" # Install required components
+
+      - name: Set up Android Emulator (optional)
         run: |
-          echo "no" | $HOME/Android/cmdline-tools/bin/avdmanager create avd --name test-emulator --package "system-images;android-29;google_apis;x86_64"
-          $HOME/Android/emulator/emulator -avd test-emulator -no-window -no-audio -gpu swiftshader_indirect &
+          # You can set up an Android Emulator if needed.
+          echo "y" | android update sdk --no-ui --filter tools,platform-tools,build-tools-29.0.2,android-29
+          echo "y" | android create avd --force --name test --target android-29 --abi x86_64
+          emulator -avd test -no-window &
 
-      # Step 8: Wait for Emulator to boot
-      - name: Wait for Emulator to boot
+      - name: Start Appium Server
         run: |
-          adb wait-for-device
+          appium &  # Start Appium server in the background
+          sleep 5  # Wait for the server to fully start
 
-      # Step 9: Run Appium Android Tests using Maven
-      - name: Run Appium Android Tests
-        run: mvn clean test -Pandroid
-
-      # Debug Step (Optional): Check SDK installation and environment
-      - name: Debug SDK path
+      - name: Run TestNG Appium Tests
         run: |
-          echo "ANDROID_SDK_ROOT=$ANDROID_SDK_ROOT"
-          echo "SDK installed at: $HOME/Android/cmdline-tools/bin/sdkmanager"
-          ls -l $HOME/Android
-          ls -l $HOME/Android/cmdline-tools
+          mvn clean test  # Run Maven tests (TestNG)
+
+      - name: Stop Appium Server
+        run: |
+          pkill -f appium  # Kill Appium process if it's still running
