@@ -3,13 +3,13 @@
 <suite name="Failed suite [Default suite]" guice-stage="DEVELOPMENT">
   <test thread-count="5" name="Default test(failed)">
     <classes>
-      <class name="anil123.Ecomerce">
+      <class name="anil123.LongPress">
         <methods>
           <include name="teardown"/>
           <include name="Configure"/>
-          <include name="Fillform"/>
+          <include name="LongPressing"/>
         </methods>
-      </class> <!-- anil123.Ecomerce -->
+      </class> <!-- anil123.LongPress -->
     </classes>
   </test> <!-- Default test(failed) -->
 </suite> <!-- Failed suite [Default suite] -->
