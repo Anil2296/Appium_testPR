@@ -47,12 +47,14 @@ jobs:
           script: |
             # Ensure the emulator is ready before starting the tests
             adb devices
-            sleep 5  # Additional time for the emulator to initialize if needed
+            sleep 10  # Additional time for the emulator to initialize if needed
 
       # Step 6: Run Appium Tests with Maven (using the android profile)
       - name: Run Appium Tests
-        run: mvn clean test -Pandroid
+        run: mvn clean test 
 
       # Step 7: Terminate Emulator after the tests are done
       - name: Terminate Emulator
-        run: adb emu kill
+        run: |
+          adb devices
+          adb emu kill || echo "Emulator not running"
