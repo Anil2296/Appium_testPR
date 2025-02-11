@@ -37,24 +37,26 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y unzip wget
+          
+          # Download the Android Command Line Tools
           wget https://dl.google.com/android/repository/commandlinetools-linux-7583922_latest.zip -O /tmp/cmdline-tools.zip
           sudo unzip /tmp/cmdline-tools.zip -d /usr/local/android-sdk
           sudo rm /tmp/cmdline-tools.zip
+          
+          # Set up environment variables
           export ANDROID_HOME=/usr/local/android-sdk
           export PATH=$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools:$PATH
+          
+          # Save environment variables to GitHub Actions environment
           echo "ANDROID_HOME=$ANDROID_HOME" >> $GITHUB_ENV
           echo "PATH=$PATH" >> $GITHUB_ENV
 
-      # Step 5: Manually download required Android SDK components
-      - name: Download required Android SDK components
+      # Step 5: Install SDK Packages (via sdkmanager)
+      - name: Install Android 29 System Image and Platform Tools
         run: |
-          wget https://dl.google.com/android/repository/platform-tools_r30.0.5-linux.zip -O /tmp/platform-tools.zip
-          wget https://dl.google.com/android/repository/sys-img/android-29-google_apis-x86_64-1.zip -O /tmp/system-images.zip
-          sudo unzip /tmp/platform-tools.zip -d /usr/local/android-sdk
-          sudo unzip /tmp/system-images.zip -d /usr/local/android-sdk
-          sudo rm /tmp/platform-tools.zip
-          sudo rm /tmp/system-images.zip
-          echo "SDK components downloaded and unzipped."
+          # Ensure sdkmanager is available and install required components
+          sdkmanager --update
+          sdkmanager "platform-tools" "platforms;android-29" "system-images;android-29;google_apis;x86_64"
 
       # Step 6: Create and start the Android emulator
       - name: Create and start emulator
