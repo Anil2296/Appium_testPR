@@ -13,73 +13,48 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Checkout the repositoryyyy
+      # Step 1: Checkout the repository
       - name: Checkout Repository
         uses: actions/checkout@v2
 
-      # Step 2: Set up JDK 17
+      # Step 2: Set up JDK 17 (or 11, depending on your preference)
       - name: Set up JDK 17
         uses: actions/setup-java@v2
         with:
           java-version: '17'
           distribution: 'temurin'
 
-      # Step 3: Install Appium
+      # Step 3: Enable KVM for emulator acceleration
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      # Step 4: Install Node.js and Appium globally
       - name: Setup Appium
         run: |
-          npm install -g appium@2.15
+          npm install -g appium@v2.15
           appium -v
           appium &>/dev/null &
-          sleep 5
+          sleep 10  # Ensure appium starts
 
-      # Step 4: Install Android SDK Command Line Tools
-      - name: Install Android SDK Command Line Tools
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y unzip wget
-          
-          # Download and unzip Android command-line tools
-          wget https://dl.google.com/android/repository/commandlinetools-linux-7583922_latest.zip -O /tmp/cmdline-tools.zip
-          sudo unzip /tmp/cmdline-tools.zip -d /usr/local/android-sdk
-          sudo rm /tmp/cmdline-tools.zip
-          
-          # Set up environment variables for Android SDK
-          echo "ANDROID_HOME=/usr/local/android-sdk" >> $GITHUB_ENV
-          echo "PATH=$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools:$PATH" >> $GITHUB_ENV
-          
-          # Verify the path and tools
-          echo $ANDROID_HOME
-          echo $PATH
-          ls $ANDROID_HOME/cmdline-tools/latest/bin
+      # Step 5: Set up Android Emulator using the reactivecircus action
+      - name: Set up Android Emulator
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 29  # Adjust to the API level you need
+          script: |
+            # Ensure the emulator is ready before starting the tests
+            adb devices
+            sleep 10  # Additional time for the emulator to initialize if needed
 
-      # Step 5: Install Android 29 SDK
-      - name: Install Android 29 System Image and Platform Tools
-        run: |
-          # Ensure sdkmanager is available and install required components
-          sdkmanager --update
-          sdkmanager "platform-tools" "platforms;android-29" "system-images;android-29;google_apis;x86_64"
-
-      # Step 6: Create and start the Android emulator
-      - name: Create and start emulator
-        run: |
-          # Create an Android Virtual Device (AVD) with API level 29
-          echo no | avdmanager create avd --force -n test-emu -k "system-images;android-29;google_apis;x86_64"
-          
-          # Start the emulator
-          emulator -avd test-emu -no-window -no-audio -no-boot-anim -gpu off &
-          
-          # Wait for the emulator to boot up
-          adb wait-for-device
-          
-          # Unlock the screen if necessary
-          adb shell input keyevent 82
-          
-          # Optional: Add a delay to ensure the emulator is fully ready before running tests
-          sleep 15
-
-      # Step 7: Run Appium Tests
+      # Step 6: Run Appium Tests with Maven (using the android profile)
       - name: Run Appium Tests
-        run: mvn clean test
+        run: mvn clean test -Pandroid  # Ensure the Android profile is specified in your Maven config
 
-      # Step 8: Stop the emulator after tests
-      - name:
+      # Step 7: Terminate Emulator after the tests are done
+      - name: Terminate Emulator
+        run: |
+          adb devices
+          adb emu kill || echo "Emulator not running"
