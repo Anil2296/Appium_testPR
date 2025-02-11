@@ -21,7 +21,7 @@ public class LongPress extends BaseTest{
 		driver.findElement(AppiumBy.androidUIAutomator("new UiScrollable(new UiSelector().scrollable(true)).scrollForward()"));
 		
 		Thread.sleep(2000);
-		
+		//hi Anil
 		driver.findElement(ByAccessibilityId.accessibilityId("Views")).click();
 		driver.findElement(By.xpath("//android.widget.TextView[@text='Expandable Lists']")).click();
 		driver.findElement(AppiumBy.accessibilityId("1. Custom Adapter")).click();
